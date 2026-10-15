@@ -1,0 +1,345 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/global.css";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects", ({ data }) => !data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const formattedDate = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+}).format(new Date(project.data.date));
+
+const projectImages: string[] =
+  project.data.images && project.data.images.length > 0
+    ? project.data.images
+    : project.data.image
+      ? [project.data.image]
+      : [];
+---
+
+<Layout
+  title={`${project.data.title} | Projects | Mohamed Karmous`}
+  description={project.data.description}
+  image={project.data.image || projectImages[0]}
+  type="article"
+  publishedTime={project.data.date}
+  tags={project.data.tech}
+>
+  <main class="max-w-3xl mx-auto px-6 text-[17px] py-10">
+    <!-- Top Navigation -->
+    <nav class="flex items-center justify-between pb-8">
+      <a href="/projects" class="plain-link text-sm font-medium">
+        &larr; Back to all projects
+      </a>
+      <a href="/" class="plain-link text-sm text-neutral-500">
+        Home
+      </a>
+    </nav>
+
+    <!-- Project Header -->
+    <header class="pb-8 border-b border-neutral-200">
+      <p class="mb-3 font-mono text-sm text-emerald-500">$ cat ~/projects/{project.id}.md</p>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2">
+          {project.data.featured && (
+            <span class="bg-emerald-100 text-emerald-800 font-mono text-xs font-semibold px-2 py-0.5 rounded">
+              Featured
+            </span>
+          )}
+          <span class="font-mono text-xs text-neutral-400">
+            {formattedDate}
+          </span>
+        </div>
+
+        <div class="flex items-center gap-4 text-sm">
+          {project.data.liveUrl && (
+            <a
+              href={project.data.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="plain-link font-medium text-emerald-600"
+            >
+              Live Demo &rarr;
+            </a>
+          )}
+          {project.data.repoUrl && (
+            <a
+              href={project.data.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="plain-link text-neutral-600"
+            >
+              Source Code &nearr;
+            </a>
+          )}
+        </div>
+      </div>
+
+      <h1 class="rowdies-bold text-3xl md:text-4xl text-neutral-900 leading-tight">
+        {project.data.title}
+      </h1>
+
+      {project.data.description && (
+        <p class="mt-4 text-lg text-neutral-600 leading-relaxed">
+          {project.data.description}
+        </p>
+      )}
+
+      {project.data.tech && project.data.tech.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          {project.data.tech.map((t: string) => (
+            <span class="inline-block bg-neutral-200/70 text-neutral-800 font-mono text-xs px-2.5 py-1 rounded">
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Project Images Ultra-Smooth Grab Slider (Embla) -->
+    {projectImages.length > 0 && (
+      <section class="my-8" aria-label="Project screenshot gallery">
+        <div class="flex items-center justify-between mb-2.5 px-1">
+          <span class="text-xs font-mono text-neutral-500 flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500">
+              <path d="m14 18 4-4-4-4"/>
+              <path d="m10 6-4 4 4 4"/>
+            </svg>
+            Drag or swipe horizontally to navigate
+          </span>
+          {projectImages.length > 1 && (
+            <span id="slider-counter" class="text-xs font-mono text-neutral-500 bg-neutral-200/60 px-2 py-0.5 rounded">
+              1 / {projectImages.length}
+            </span>
+          )}
+        </div>
+
+        <div class="embla-wrapper relative group select-none">
+          <div id="embla-viewport" class="embla overflow-hidden rounded-xl border border-neutral-200/80 bg-neutral-900/5 cursor-grab active:cursor-grabbing">
+            <div class="embla__container flex touch-pan-y">
+              {projectImages.map((imgUrl, index) => (
+                <div class="embla__slide flex-[0_0_100%] min-w-0 p-2">
+                  <div class="rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200/60 shadow-sm flex items-center justify-center">
+                    <img
+                      src={imgUrl}
+                      alt={`${project.data.title} preview ${index + 1}`}
+                      class="w-full h-auto max-h-[480px] object-cover pointer-events-none select-none rounded-lg"
+                      loading={index === 0 ? "eager" : "lazy"}
+                      draggable="false"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {projectImages.length > 1 && (
+            <>
+              <button
+                type="button"
+                id="slider-prev-btn"
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-white text-neutral-800 shadow-lg border border-neutral-200 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer hover:scale-105 active:scale-95"
+                aria-label="Previous slide"
+              >
+                &larr;
+              </button>
+              <button
+                type="button"
+                id="slider-next-btn"
+                class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-white text-neutral-800 shadow-lg border border-neutral-200 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer hover:scale-105 active:scale-95"
+                aria-label="Next slide"
+              >
+                &rarr;
+              </button>
+
+              <div class="flex justify-center gap-1.5 mt-3" id="slider-dots">
+                {projectImages.map((_, index) => (
+                  <button
+                    type="button"
+                    class={`slider-dot h-2 rounded-full transition-all duration-300 cursor-pointer ${index === 0 ? "bg-emerald-500 w-6" : "bg-neutral-300 w-2"}`}
+                    data-slide-index={index}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- Project Body -->
+    <article class="dhh-article py-8">
+      <Content />
+    </article>
+
+    <!-- Project Footer -->
+    <footer class="pt-8 mt-12 border-t border-neutral-200 flex justify-between items-center text-sm text-neutral-500">
+      <a href="/projects" class="plain-link">
+        &larr; Back to all projects
+      </a>
+      <a href="#top" class="plain-link">
+        Back to top &uarr;
+      </a>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  function setupSlider() {
+    const viewportNode = document.getElementById("embla-viewport");
+    if (!viewportNode) return;
+
+    const emblaApi = EmblaCarousel(viewportNode, {
+      loop: false,
+      dragFree: false,
+      duration: 25,
+      skipSnaps: false,
+    });
+
+    const prevBtn = document.getElementById("slider-prev-btn");
+    const nextBtn = document.getElementById("slider-next-btn");
+    const dots = document.querySelectorAll(".slider-dot");
+    const counter = document.getElementById("slider-counter");
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => emblaApi.scrollPrev());
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => emblaApi.scrollNext());
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const index = Number(target.dataset.slideIndex);
+        emblaApi.scrollTo(index);
+      });
+    });
+
+    function updateUI() {
+      const selectedIndex = emblaApi.selectedScrollSnap();
+      dots.forEach((dot, idx) => {
+        if (idx === selectedIndex) {
+          dot.classList.add("bg-emerald-500", "w-6");
+          dot.classList.remove("bg-neutral-300", "w-2");
+        } else {
+          dot.classList.remove("bg-emerald-500", "w-6");
+          dot.classList.add("bg-neutral-300", "w-2");
+        }
+      });
+      if (counter) {
+        counter.textContent = `${selectedIndex + 1} / ${emblaApi.scrollSnapList().length}`;
+      }
+    }
+
+    emblaApi.on("select", updateUI);
+    emblaApi.on("init", updateUI);
+  }
+
+  setupSlider();
+  document.addEventListener("astro:page-load", setupSlider);
+</script>
+
+<style>
+  .plain-link {
+    border-bottom: 1px solid #000;
+    text-decoration: none;
+    color: inherit;
+  }
+  .plain-link:hover {
+    color: #34d399;
+  }
+
+  .embla {
+    overflow: hidden;
+  }
+
+  .embla__container {
+    display: flex;
+    will-change: transform;
+  }
+
+  .dhh-article :global(h2) {
+    font-size: 24px;
+    font-weight: 700;
+    padding-top: 2rem;
+    padding-bottom: 0.6rem;
+    color: #171717;
+    scroll-margin-top: 1.5rem;
+  }
+  .dhh-article :global(h3) {
+    font-size: 19px;
+    font-weight: 600;
+    padding-top: 1.5rem;
+    padding-bottom: 0.4rem;
+    color: #262626;
+  }
+  .dhh-article :global(p) {
+    color: #525252;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .dhh-article :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .dhh-article :global(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .dhh-article :global(li) {
+    color: #525252;
+    line-height: 1.75;
+    margin-bottom: 0.5rem;
+  }
+  .dhh-article :global(code) {
+    font-family: "Google Sans Code", monospace;
+    font-size: 0.88em;
+    background: #e5e7eb;
+    color: #111827;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+  }
+  .dhh-article :global(pre) {
+    background: #18181b;
+    color: #f4f4f5;
+    padding: 1.25rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .dhh-article :global(pre code) {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  .dhh-article :global(a) {
+    border-bottom: 1px solid #000;
+    color: inherit;
+  }
+  .dhh-article :global(a:hover) {
+    color: #34d399;
+  }
+  .dhh-article :global(strong) {
+    font-weight: 600;
+    color: #171717;
+  }
+</style>

@@ -1,0 +1,228 @@
+---
+import { Image } from "astro:assets";
+import { marked } from "marked";
+import meImg from "../assets/me.png";
+
+// ---------- Types ----------
+type MeData = {
+  name: string;
+  title: string;
+  except: string;
+  contact: string;
+  tagline: string;
+  username: string;
+  location?: string;
+  email: string;
+  cvUrl?: string;
+  github?: string;
+  youtube?: string;
+  linkedin?: string;
+  twitter?: string;
+  available?: boolean;
+  availableText?: string;
+};
+
+type MarkdownHeading = { depth: number; slug: string; text: string };
+type MeEntry = {
+  frontmatter: MeData;
+  Content: any;
+  getHeadings?: () => MarkdownHeading[];
+};
+
+// ---------- Load me.md ----------
+const meFiles = import.meta.glob<MeEntry>("../data/me.md", { eager: true });
+const meEntry = meFiles["../data/me.md"];
+if (!meEntry) {
+  throw new Error("me.md not found at ../data/me.md");
+}
+
+const { frontmatter: data, Content, getHeadings } = meEntry;
+const headings = (getHeadings ? getHeadings() : []).filter(
+  (h) => h.depth === 2,
+);
+
+const md = (s?: string) => marked.parseInline(s || "") as string;
+const except = md(data.except);
+const tagline = md(data.tagline);
+
+const socials = [
+  data.github && { label: "GitHub", href: data.github },
+  data.linkedin && { label: "LinkedIn", href: data.linkedin },
+  data.youtube && { label: "YouTube", href: data.youtube },
+  data.twitter && { label: "X", href: data.twitter },
+  data.email && { label: "Email", href: `mailto:${data.email}` },
+].filter(Boolean) as { label: string; href: string }[];
+
+function highlight(text: string): string {
+  return text.replace(
+    /\*\*(.+?)\*\*/g,
+    '<span class="text-emerald-500">$1</span>',
+  );
+}
+const plainName = data.name.replace(/\*/g, "");
+---
+
+<main class="max-w-3xl mx-auto px-6 text-[17px]">
+  <div class="flex justify-center p-10">
+    <Image
+      src={meImg}
+      alt={`Portrait of ${plainName}`}
+      class="rounded-full"
+      width={160}
+      height={160}
+      loading="eager"
+    />
+  </div>
+
+  <header class="text-center">
+    <h1 class="rowdies-bold text-[40px]">
+      <Fragment set:html={highlight(data.name)} />
+    </h1>
+    <p class="mt-1 text-lg text-neutral-800">{data.title}</p>
+    <p
+      class="mx-auto mt-4 max-w-[700px] leading-relaxed text-neutral-500"
+      set:html={except}
+    />
+    <div class="links flex w-full justify-center gap-x-10 py-5">
+      {
+        data.cvUrl && (
+          <p class="">
+            <a href={data.cvUrl} download class="plain-link">
+              Download CV
+            </a>
+          </p>
+        )
+      }
+
+      <a href="/blogs" class="plain-link">Blogs</a>
+            <a href="/projects" class="plain-link">Projects</a>
+
+    </div>
+  </header>
+
+  <section class="pt-10 pb-16">
+    <p class="mb-4 font-mono text-sm text-emerald-500">$ whoami</p>
+    <h2
+      class="press-start-2p-regular text-4xl leading-tight tracking-tight md:text-[15px]"
+    >
+      ~&gt; {data.username}
+    </h2>
+    <p class="py-5 pb-6 text-[18px] text-neutral-500" set:html={tagline} />
+
+    {
+      headings.length > 0 && (
+        <nav
+          aria-label="Sections"
+          class="flex flex-wrap items-center gap-x-2 gap-y-1 pb-10 text-sm text-neutral-400"
+        >
+          {headings.map((h, i) => (
+            <>
+              <a
+                href={`#${h.slug}`}
+                class="text-neutral-700 hover:text-emerald-500"
+              >
+                {h.text}
+              </a>
+              {i < headings.length - 1 && (
+                <span aria-hidden="true">&middot;</span>
+              )}
+            </>
+          ))}
+        </nav>
+      )
+    }
+
+    <article class="dhh-article pb-10">
+      <Content />
+    </article>
+
+    {
+      data.available && data.availableText && (
+        <p class="mt-4 text-sm text-neutral-500">{data.availableText}</p>
+      )
+    }
+
+    <p class="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm text-neutral-500">
+      {
+        socials.map((s) => (
+          <a
+            href={s.href}
+            class="hover:text-neutral-900"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {s.label}
+          </a>
+        ))
+      }
+      {data.location && <span class="ml-auto">{data.location}</span>}
+    </p>
+  </section>
+</main>
+
+<style>
+  .plain-link {
+    border-bottom: 1px solid #000;
+  }
+  .plain-link:hover {
+    color: #34d399;
+  }
+  .dhh-article :global(h2) {
+    font-size: 25px;
+    font-weight: 700;
+    padding-top: 2.25rem;
+    padding-bottom: 0.75rem;
+    color: #171717;
+    scroll-margin-top: 1.5rem;
+  }
+  .dhh-article :global(h2:first-of-type) {
+    padding-top: 0;
+  }
+  .dhh-article :global(p) {
+    color: #737373;
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+  .dhh-article :global(h3) {
+    font-size: 19px;
+    font-weight: 600;
+    padding-top: 1rem;
+    color: #262626;
+  }
+  .dhh-article :global(h3 + p) {
+    margin-top: 0.15rem;
+  }
+  .dhh-article :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .dhh-article :global(ul li) {
+    margin-bottom: 0.35rem;
+  }
+  .dhh-article :global(em) {
+    font-size: 15px;
+    color: #a3a3a3;
+  }
+  .dhh-article :global(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .dhh-article :global(li) {
+    color: #737373;
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+  }
+  .dhh-article :global(a) {
+    border-bottom: 1px solid #000;
+    color: inherit;
+  }
+  .dhh-article :global(a:hover) {
+    color: #34d399;
+  }
+  .dhh-article :global(strong) {
+    font-weight: 600;
+    color: #262626;
+  }
+</style>

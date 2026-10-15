@@ -1,0 +1,183 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import "../../styles/global.css";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+}).format(new Date(post.data.date));
+---
+
+<Layout
+  title={`${post.data.title} | Mohamed Karmous`}
+  description={post.data.description}
+  image={post.data.image}
+  type="article"
+  publishedTime={post.data.date}
+  tags={post.data.tags}
+>
+  <main class="max-w-3xl mx-auto px-6 text-[17px] py-10">
+    <!-- Top Navigation -->
+    <nav class="flex items-center justify-between pb-8">
+      <a href="/blogs" class="plain-link text-sm font-medium">
+        &larr; Back to all blogs
+      </a>
+      <a href="/" class="plain-link text-sm text-neutral-500">
+        Home
+      </a>
+    </nav>
+
+    <!-- Post Header -->
+    <header class="pb-8 border-b border-neutral-200">
+      <p class="mb-3 font-mono text-sm text-emerald-500">$ cat ~/blogs/{post.id}.md</p>
+
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
+        <time
+          datetime={new Date(post.data.date).toISOString()}
+          class="font-mono text-xs text-emerald-600"
+        >
+          {formattedDate}
+        </time>
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5">
+            {post.data.tags.map((tag: string) => (
+              <span class="inline-block bg-neutral-200/60 text-neutral-700 font-mono text-xs px-2 py-0.5 rounded">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <h1 class="rowdies-bold text-3xl md:text-4xl text-neutral-900 leading-tight">
+        {post.data.title}
+      </h1>
+
+      {post.data.description && (
+        <p class="mt-4 text-lg text-neutral-600 leading-relaxed">
+          {post.data.description}
+        </p>
+      )}
+    </header>
+
+    {post.data.image && (
+      <div class="my-8 overflow-hidden rounded-xl border border-neutral-200 shadow-sm">
+        <img
+          src={post.data.image}
+          alt={post.data.title}
+          class="w-full h-auto max-h-[460px] object-cover"
+          loading="eager"
+        />
+      </div>
+    )}
+
+    <!-- Post Body -->
+    <article class="dhh-article py-8">
+      <Content />
+    </article>
+
+    <!-- Post Footer -->
+    <footer class="pt-8 mt-12 border-t border-neutral-200 flex justify-between items-center text-sm text-neutral-500">
+      <a href="/blogs" class="plain-link">
+        &larr; Back to all blogs
+      </a>
+      <a href="#top" class="plain-link">
+        Back to top &uarr;
+      </a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  .plain-link {
+    border-bottom: 1px solid #000;
+    text-decoration: none;
+    color: inherit;
+  }
+  .plain-link:hover {
+    color: #34d399;
+  }
+
+  .dhh-article :global(h2) {
+    font-size: 24px;
+    font-weight: 700;
+    padding-top: 2rem;
+    padding-bottom: 0.6rem;
+    color: #171717;
+    scroll-margin-top: 1.5rem;
+  }
+  .dhh-article :global(h3) {
+    font-size: 19px;
+    font-weight: 600;
+    padding-top: 1.5rem;
+    padding-bottom: 0.4rem;
+    color: #262626;
+  }
+  .dhh-article :global(p) {
+    color: #525252;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .dhh-article :global(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .dhh-article :global(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .dhh-article :global(li) {
+    color: #525252;
+    line-height: 1.75;
+    margin-bottom: 0.5rem;
+  }
+  .dhh-article :global(code) {
+    font-family: "Google Sans Code", monospace;
+    font-size: 0.88em;
+    background: #e5e7eb;
+    color: #111827;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+  }
+  .dhh-article :global(pre) {
+    background: #18181b;
+    color: #f4f4f5;
+    padding: 1.25rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .dhh-article :global(pre code) {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  .dhh-article :global(a) {
+    border-bottom: 1px solid #000;
+    color: inherit;
+  }
+  .dhh-article :global(a:hover) {
+    color: #34d399;
+  }
+  .dhh-article :global(strong) {
+    font-weight: 600;
+    color: #171717;
+  }
+</style>
