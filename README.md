@@ -23,15 +23,4 @@ DevOps Engineer Student and Full-Stack Developer focused on building scalable we
 
 ---
 
-## 🛠️ Portfolio Website (Astro)
-
-This repository contains the source code for my personal portfolio website, built with [Astro](https://astro.build) and [Tailwind CSS](https://tailwindcss.com).
-
-### Commands
-
-| Command | Action |
-| :--- | :--- |
-| `npm install` | Install dependencies |
-| `npm run dev` | Start local development server |
-| `npm run build` | Build production bundle to `./dist/` |
-| `npm run preview` | Preview production build locally |
+*2026 - 10 - 15*
