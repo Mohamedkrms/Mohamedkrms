@@ -1,46 +1,37 @@
-# Astro Starter Kit: Basics
+# Mohamed Karmous (@karmsdev)
 
-```sh
-npm create astro@latest -- --template basics
-```
+DevOps Engineer Student and Full-Stack Developer focused on building scalable web applications and automating cloud infrastructure. My work bridges the gap between software development and systems operations, with a strong emphasis on containerization, security, and Linux-based environments.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### Technical Expertise
+- **Full-Stack Development:** Designing and deploying responsive web architectures and APIs.
+- **DevOps & Cloud:** Implementing Infrastructure as Code (IaC), CI/CD pipelines, and container orchestration.
+- **Systems & Networking:** Advanced Linux administration, server management, and local network optimization.
 
-## 🚀 Project Structure
+### Technologies & Tools
+- **Frameworks & Languages:** JavaScript, TypeScript, PHP, Python, Bash
+- **Infrastructure:** Docker, Kubernetes, Terraform
+- **Environment & Security:** Arch Linux, Hyprland, Pi-hole, Cloudflared
 
-Inside of your Astro project, you'll see the following folders and files:
+### Education & Professional
+- **Computer Science Student:** ISITCOM
+- **Handle:** @karmsdev
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+### Connect
+- [Portfolio](https://karms.dev) 
+- [LinkedIn](https://linkedin.com/in/mohamedkarmous)
+- [YouTube](https://youtube.com/@mohamedkarms)
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+---
 
-## 🧞 Commands
+## 🛠️ Portfolio Website (Astro)
 
-All commands are run from the root of the project, from a terminal:
+This repository contains the source code for my personal portfolio website, built with [Astro](https://astro.build) and [Tailwind CSS](https://tailwindcss.com).
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Commands
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command | Action |
+| :--- | :--- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start local development server |
+| `npm run build` | Build production bundle to `./dist/` |
+| `npm run preview` | Preview production build locally |
