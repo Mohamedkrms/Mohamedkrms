@@ -13,11 +13,13 @@ type MeData = {
   username: string;
   location?: string;
   email: string;
+  phone?: string;
   cvUrl?: string;
   github?: string;
   youtube?: string;
   linkedin?: string;
   twitter?: string;
+  reddit?: string;
   available?: boolean;
   availableText?: string;
 };
@@ -42,15 +44,20 @@ const headings = (getHeadings ? getHeadings() : []).filter(
 );
 
 const md = (s?: string) => marked.parseInline(s || "") as string;
-const except = md(data.except);
+const except = md(data.except || (data as any).excerpt);
 const tagline = md(data.tagline);
 
 const socials = [
   data.github && { label: "GitHub", href: data.github },
   data.linkedin && { label: "LinkedIn", href: data.linkedin },
-  data.youtube && { label: "YouTube", href: data.youtube },
   data.twitter && { label: "X", href: data.twitter },
+  data.reddit && { label: "Reddit", href: data.reddit },
+  data.youtube && { label: "YouTube", href: data.youtube },
   data.email && { label: "Email", href: `mailto:${data.email}` },
+  data.phone && {
+    label: "Phone",
+    href: `tel:${data.phone.replace(/\s+/g, "")}`,
+  },
 ].filter(Boolean) as { label: string; href: string }[];
 
 function highlight(text: string): string {
@@ -87,16 +94,24 @@ const plainName = data.name.replace(/\*/g, "");
       {
         data.cvUrl && (
           <p class="">
-            <a href={data.cvUrl} download class="plain-link">
+            <a href={data.cvUrl} target="_blank" class="plain-link">
               Download CV
             </a>
           </p>
         )
       }
 
-      <a href="/blogs" class="plain-link">Blogs</a>
-            <a href="/projects" class="plain-link">Projects</a>
+      {
+        (
+          <a href="#contact" class="plain-link">
+            Contact me
+          </a>
 
+          /*  <a href="/blogs" class="plain-link">Blogs</a>
+            <a href="/projects" class="plain-link">Projects</a>
+ */
+        )
+      }
     </div>
   </header>
 
