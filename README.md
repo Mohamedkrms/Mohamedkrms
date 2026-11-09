@@ -17,7 +17,7 @@ DevOps Engineer Student and Full-Stack Developer focused on building scalable we
 - **Handle:** @karmsdev
 
 ### Connect
-- [Portfolio](https://karms.dev) 
+- [Portfolio](https://karmsdev.com) 
 - [LinkedIn](https://linkedin.com/in/mohamedkarmous)
 - [YouTube](https://youtube.com/@mohamedkarms)
 
