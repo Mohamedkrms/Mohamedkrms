@@ -12,9 +12,7 @@ phone: "+216 22 288 355"
 cvUrl: "/cv.pdf"
 github: "https://github.com/Mohamedkrms"
 linkedin: "https://www.linkedin.com/in/mohamedkarmous/"
-twitter: "https://x.com/mohamedkarms"
-reddit: "https://www.reddit.com/user/KARMSDEV"
-youtube: "https://www.youtube.com/@mohamedkarms"
+
 available: true
 availableText: "Open to PFE internships and technical opportunities."
 skills:
